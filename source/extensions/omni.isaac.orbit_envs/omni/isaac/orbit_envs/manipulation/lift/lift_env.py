@@ -45,17 +45,17 @@ class LiftEnv(IsaacEnv):
         self._initialize_views()
 
         # prepare the observation manager
-        self._observation_manager = LiftObservationManager(class_to_dict(self.cfg.observations), self, self.device)
+        self.observation_manager = LiftObservationManager(class_to_dict(self.cfg.observations), self, self.device)
         # prepare the reward manager
-        self._reward_manager = LiftRewardManager(
+        self.reward_manager = LiftRewardManager(
             class_to_dict(self.cfg.rewards), self, self.num_envs, self.dt, self.device
         )
         # print information about MDP
-        print("[INFO] Observation Manager:", self._observation_manager)
-        print("[INFO] Reward Manager: ", self._reward_manager)
+        print("[INFO] Observation Manager:", self.observation_manager)
+        print("[INFO] Reward Manager: ", self.reward_manager)
 
         # compute the observation space: arm joint state + ee-position + goal-position + actions
-        num_obs = self._observation_manager.group_obs_dim["policy"][0]
+        num_obs = self.observation_manager.group_obs_dim["policy"][0]
         self.observation_space = gym.spaces.Box(low=-math.inf, high=math.inf, shape=(num_obs,))
         # compute the action space
         self.action_space = gym.spaces.Box(low=-1.0, high=1.0, shape=(self.num_actions,))
@@ -115,7 +115,8 @@ class LiftEnv(IsaacEnv):
         dof_pos, dof_vel = self.robot.get_default_dof_state(env_ids=env_ids)
         self.robot.set_dof_state(dof_pos, dof_vel, env_ids=env_ids)
         # -- object pose
-        self._randomize_object_initial_pose(env_ids=env_ids, cfg=self.cfg.randomization.object_initial_pose)
+        # TODO: Uncomment for training
+        # self._randomize_object_initial_pose(env_ids=env_ids, cfg=self.cfg.randomization.object_initial_pose)
         # -- goal pose
         self._randomize_object_desired_pose(env_ids=env_ids, cfg=self.cfg.randomization.object_desired_pose)
 
@@ -124,9 +125,9 @@ class LiftEnv(IsaacEnv):
         self.extras["episode"] = dict()
         # reset
         # -- rewards manager: fills the sums for terminated episodes
-        self._reward_manager.reset_idx(env_ids, self.extras["episode"])
+        self.reward_manager.reset_idx(env_ids, self.extras["episode"])
         # -- obs manager
-        self._observation_manager.reset_idx(env_ids)
+        self.observation_manager.reset_idx(env_ids)
         # -- reset history
         self.previous_actions[env_ids] = 0
         # -- MDP reset
@@ -172,7 +173,7 @@ class LiftEnv(IsaacEnv):
         self.object.update_buffers(self.dt)
         # -- compute MDP signals
         # reward
-        self.reward_buf = self._reward_manager.compute()
+        self.reward_buf = self.reward_manager.compute()
         # terminations
         self._check_termination()
         # -- store history
@@ -190,7 +191,7 @@ class LiftEnv(IsaacEnv):
 
     def _get_observations(self) -> VecEnvObs:
         # compute observations
-        return self._observation_manager.compute()
+        return self.observation_manager.compute()
 
     """
     Helper functions - Scene handling.

@@ -47,7 +47,8 @@ from omni.isaac.orbit.controllers.differential_inverse_kinematics import (
 )
 from omni.isaac.orbit.markers import StaticMarker
 from omni.isaac.orbit.robots.config.franka import FRANKA_PANDA_ARM_WITH_PANDA_HAND_CFG
-from omni.isaac.orbit.robots.config.universal_robots import UR10_CFG
+from omni.isaac.orbit.robots.config.universal_robots import UR10_CFG, UR5_CFG
+from omni.isaac.orbit.robots.config.kinova import JACO_CFG
 from omni.isaac.orbit.robots.single_arm import SingleArmManipulator
 from omni.isaac.orbit.utils.assets import ISAAC_NUCLEUS_DIR
 
@@ -104,8 +105,12 @@ def main():
         robot_cfg = FRANKA_PANDA_ARM_WITH_PANDA_HAND_CFG
     elif args_cli.robot == "ur10":
         robot_cfg = UR10_CFG
+    elif args_cli.robot == "ur5":
+        robot_cfg = UR5_CFG
+    elif args_cli.robot == "jaco":
+        robot_cfg = JACO_CFG
     else:
-        raise ValueError(f"Robot {args_cli.robot} is not supported. Valid: franka_panda, ur10")
+        raise ValueError(f"Robot {args_cli.robot} is not supported. Valid: franka_panda, ur10, ur5, jaco")
     # configure robot settings to use IK controller
     robot_cfg.data_info.enable_jacobian = True
     robot_cfg.rigid_props.disable_gravity = True
@@ -183,7 +188,7 @@ def main():
             sim.step(render=not args_cli.headless)
             continue
         # reset
-        if count % 150 == 0:
+        if count % 450 == 0:
             # reset time
             count = 0
             sim_time = 0.0

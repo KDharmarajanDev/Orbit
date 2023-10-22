@@ -6,6 +6,7 @@
 from omni.isaac.orbit.controllers.differential_inverse_kinematics import DifferentialInverseKinematicsCfg
 from omni.isaac.orbit.objects import RigidObjectCfg
 from omni.isaac.orbit.robots.config.franka import FRANKA_PANDA_ARM_WITH_PANDA_HAND_CFG
+from omni.isaac.orbit.robots.config.universal_robots import UR10_CFG, UR5_CFG
 from omni.isaac.orbit.robots.single_arm import SingleArmManipulatorCfg
 from omni.isaac.orbit.utils import configclass
 from omni.isaac.orbit.utils.assets import ISAAC_NUCLEUS_DIR
@@ -86,7 +87,9 @@ class RandomizationCfg:
         position_cat: str = "default"  # randomize position: "default", "uniform"
         orientation_cat: str = "default"  # randomize position: "default", "uniform"
         # randomize position
-        position_uniform_min = [0.4, -0.25, 0.075]  # position (x,y,z)
+        # position_uniform_min = [0.4, -0.25, 0.075]  # position (x,y,z)
+        # position_uniform_max = [0.6, 0.25, 0.075]  # position (x,y,z)
+        position_uniform_min = [0.6, 0.25, 0.075]  # position (x,y,z)
         position_uniform_max = [0.6, 0.25, 0.075]  # position (x,y,z)
 
     @configclass
@@ -220,6 +223,7 @@ class LiftEnvCfg(IsaacEnvCfg):
     # Scene Settings
     # -- robot
     robot: SingleArmManipulatorCfg = FRANKA_PANDA_ARM_WITH_PANDA_HAND_CFG
+    # robot: SingleArmManipulatorCfg = UR5_CFG
     # -- object
     object: ManipulationObjectCfg = ManipulationObjectCfg()
     # -- table

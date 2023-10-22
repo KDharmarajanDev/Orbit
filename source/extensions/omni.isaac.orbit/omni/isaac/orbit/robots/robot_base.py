@@ -241,6 +241,7 @@ class RobotBase:
         self.articulations._physics_sim_view.enable_warnings(False)
         # apply actions into sim
         if self.sim_dof_control_modes["position"]:
+            print(self._data.dof_pos_targets)
             self.articulations._physics_view.set_dof_position_targets(self._data.dof_pos_targets, self._ALL_INDICES)
         if self.sim_dof_control_modes["velocity"]:
             self.articulations._physics_view.set_dof_velocity_targets(self._data.dof_vel_targets, self._ALL_INDICES)

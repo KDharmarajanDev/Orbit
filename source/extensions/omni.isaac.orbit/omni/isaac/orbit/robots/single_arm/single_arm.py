@@ -90,6 +90,7 @@ class SingleArmManipulator(RobotBase):
             physx_material_api.CreateImprovePatchFrictionAttr().Set(True)
             # -- bind material to feet
             for site_name in self.cfg.meta_info.tool_sites_names:
+                # input(f"{prim_path}/{site_name}")
                 kit_utils.apply_nested_physics_material(f"{prim_path}/{site_name}", material.prim_path)
 
     def initialize(self, prim_paths_expr: Optional[str] = None):
@@ -97,6 +98,7 @@ class SingleArmManipulator(RobotBase):
         super().initialize(prim_paths_expr)
         # create handles
         # -- ee frame
+        # input(f"{self._prim_paths_expr}/{self.cfg.ee_info.body_name}")
         self.ee_parent_body = RigidPrimView(
             prim_paths_expr=f"{self._prim_paths_expr}/{self.cfg.ee_info.body_name}", reset_xform_properties=False
         )
@@ -190,8 +192,13 @@ class SingleArmManipulator(RobotBase):
             tool_sites_indices = list()
             for body_index, body_name in enumerate(self.body_names):
                 for re_key in self.cfg.meta_info.tool_sites_names:
+                    prev_key = None
+                    if '/' in re_key:
+                        prev_key = re_key
+                        re_key = re_key.split('/')[-1]
+                    print(re_key, body_name)
                     if re.fullmatch(re_key, body_name):
-                        tool_sites_names.append(body_name)
+                        tool_sites_names.append(prev_key if prev_key else body_name)
                         tool_sites_indices.append(body_index)
             # check valid indices
             if len(tool_sites_names) == 0:
